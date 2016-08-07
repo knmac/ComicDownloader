@@ -4,12 +4,15 @@
 Allow downloading with a given url of a chapter or a file containing chapter urls
 For the time being, support readcomiconline.to
 
-For more information, type
+
+## Usage
+For more information about how to use downloader.py, type
 ```bash
 python downloader.py -h
 ```
 
-## Usage
+(Result)
+```bash
 usage: downloader.py [-h] (-c CHAPURL | -s SERURL | -f FILE) [-d DEST]
 
 optional arguments:
@@ -18,7 +21,8 @@ optional arguments:
   -s SERURL   The url of a whole comic series
   -f FILE     File contains list of comic's chapter url
   -d DEST     Destination to store comic
-  
+```
+
 ## Dependencies
 - cfscraper
 - progressbar
