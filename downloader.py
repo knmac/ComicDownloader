@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, ipdb
 import urllib2, shutil, argparse
 import cfscrape
 from progressbar import ProgressBar, Percentage, Bar, RotatingMarker, ETA, FileTransferSpeed
@@ -65,18 +65,18 @@ def download_data(url, filename, dst_dir):
 	page = urllib2.urlopen(url)
 	meta = page.info()
 	filesize = int(meta.getheaders("Content-Length")[0])
-	print 'Downloading %s Bytes: %s' %(filename, filesize)
+	#print 'Downloading %s Bytes: %s' %(filename, filesize)
 	
-	pbar = ProgressBar(widgets=WIDGETS, maxval=filesize).start()
-	filesize_dl = 0
+	#pbar = ProgressBar(widgets=WIDGETS, maxval=filesize).start()
+	#filesize_dl = 0
 	while True:
 		buff = page.read(BLOCK_SZ)
 		if not buff:
 			break
 		f.write(buff)
-		filesize_dl += len(buff)
-		pbar.update(filesize_dl)
-	pbar.finish()
+		#filesize_dl += len(buff)
+		#pbar.update(filesize_dl)
+	#pbar.finish()
 	f.close()
 	return
 
@@ -108,10 +108,14 @@ def download_chapter(chap_url, dest, compress=True):
 
 	# download each page
 	page = 0
+	ipdb.set_trace()
+	pbar = ProgressBar(widgets=WIDGETS, maxval=len(pg_url_lst)-1).start()
 	for url in pg_url_lst:
 		page += 1
 		page_name = 'pg_'+str(page).zfill(3)+IMG_EXT
 		download_data(url, page_name, chap_pth)
+		pbar.update(page)
+	pbar.finish()
 
 	# compress and convert to cbz
 	if compress == True:
@@ -145,8 +149,8 @@ if __name__ == '__main__':
 		with open(argv.file,'r') as f:
 			chap_url_list = f.read().splitlines()
 		for chap_url in chap_url_list:
-			print '=========================================================='
+			print '======================================================================='
 			print chap_url
-			print '=========================================================='
+			print '======================================================================='
 			download_chapter(chap_url, argv.dest)
 			print '\n\n'
