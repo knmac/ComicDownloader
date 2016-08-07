@@ -152,7 +152,7 @@ def download_chapter(chap_url, dest, chap_name=None, compress=True):
 
 	# download each page
 	page = 0
-	pbar = ProgressBar(widgets=WIDGETS, maxval=len(pg_url_lst)-1).start()
+	pbar = ProgressBar(widgets=WIDGETS, maxval=len(pg_url_lst)).start()
 	for url in pg_url_lst:
 		page += 1
 		page_name = 'pg_'+str(page).zfill(3)+IMG_EXT
