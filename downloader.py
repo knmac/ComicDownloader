@@ -1,4 +1,4 @@
-import os, sys, ipdb
+import os, sys
 import urllib2, shutil, argparse
 import cfscrape
 from progressbar import ProgressBar, Percentage, Bar, RotatingMarker, ETA, FileTransferSpeed
@@ -122,7 +122,7 @@ def download_chapter(chap_url, dest, compress=True):
 #====================================================================================
 if __name__ == '__main__':
 	# parse input argument
-	parser = argparse.ArgumentParser(description='Download comic')
+	parser = argparse.ArgumentParser(description='Download comic from readcomiconline.to')
 	group = parser.add_mutually_exclusive_group(required=True)
 	group.add_argument('-c', action='store', dest='chapurl', type=str, help='The url of a comic chapter')
 	group.add_argument('-s', action='store', dest='serurl', type=str, help='The url of a whole comic series')
