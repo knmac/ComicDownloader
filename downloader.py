@@ -15,7 +15,7 @@ WIDGETS = ['Progress: ',
 
 #====================================================================================
 def get_page_url_list(chap_url):
-	""" Retrieve the list of page url from a chapter
+	""" Retrieve the list of page url from give chapter's url
 		Input:
 			chap_url: url of the chapter
 		Output:
@@ -34,6 +34,47 @@ def get_page_url_list(chap_url):
 			url = url.replace('");', '')
 			pg_url_lst.append(url)
 	return pg_url_lst
+
+
+def get_chapter_url_list(series_url):
+	""" Retrieve the list of chapter url from given series' url
+		Input:
+			series_url: url of the series
+		Output:
+			chap_url_lst: list of chapter url
+			chap_name_lst: list of chapter name
+	"""
+	print 'Getting content from series\' url...'
+	scraper = cfscrape.create_scraper()
+	page = scraper.get(series_url)
+	lines = page.content.splitlines()
+
+	# find the table containing chapters' url
+	for pos in range(len(lines)):
+		if '<table class="listing">' in lines[pos]:
+			break
+
+	# parse chapters' url
+	chap_url_lst, chap_name_lst = [], []
+	while not '</table>' in lines[pos]:
+		if 'href' in lines[pos]:
+			# parse url
+			raw_url = lines[pos].lstrip()
+			raw_url = raw_url.split('"')[1]
+			url = series_url + '/' + raw_url.split('/')[-1]
+			chap_url_lst.append(url)
+
+			# parse name
+			name = lines[pos+2].lstrip()
+			name = name.replace('</a>','')
+			chap_name_lst.append(name)
+			pos += 2
+		pos += 1
+
+	# reverse the list (because latest chapter is on top by default)
+	chap_name_lst.reverse()
+	chap_url_lst.reverse()
+	return chap_url_lst, chap_name_lst
 
 
 def dir_2_cbz(dir_pth):
@@ -81,11 +122,13 @@ def download_data(url, filename, dst_dir):
 	return
 
 
-def download_chapter(chap_url, dest, compress=True):
+def download_chapter(chap_url, dest, chap_name=None, compress=True):
 	""" Download a chapter of comic
 		Input:
 			chap_url: url of the chapter
 			dest: where the chapter is saved
+			chap_name: specify the name of the chapter. If None (default) then 
+				the chapter name is generated from chapter's url
 			compress: whether to convert the chapter to cbz file, True by default
 		Output:
 			None
@@ -93,7 +136,8 @@ def download_chapter(chap_url, dest, compress=True):
 	# parse name from chapter's url
 	tokens = chap_url.split('/')
 	comic_name = tokens[-2]
-	chap_name = tokens[-1].split('?')[0]
+	if chap_name is None:
+		chap_name = tokens[-1].split('?')[0]
 
 	# get url list of all pages
 	pg_url_lst = get_page_url_list(chap_url)
@@ -108,7 +152,6 @@ def download_chapter(chap_url, dest, compress=True):
 
 	# download each page
 	page = 0
-	ipdb.set_trace()
 	pbar = ProgressBar(widgets=WIDGETS, maxval=len(pg_url_lst)-1).start()
 	for url in pg_url_lst:
 		page += 1
@@ -139,18 +182,24 @@ if __name__ == '__main__':
 		os.mkdir(argv.dest)
 
 	# download comic depending on the input method
+	sep = '======================================================================='
 	if argv.chapurl is not None:
 		download_chapter(argv.chapurl, argv.dest)
 	elif argv.serurl is not None:
-		comic_name = argv.chapurl.split('/')[-1]
-		print 'Not implemented yet'
-		exit()
+		comic_name = argv.serurl.split('/')[-1]
+		chap_url_lst, chap_name_lst = get_chapter_url_list(argv.serurl)
+		n = len(chap_url_lst)
+		print n,'chapters found'
+
+		for i in range(n):
+			print sep + '\n' + chap_url_lst[i] + '\n' + sep
+			download_chapter(chap_url_lst[i], argv.dest, chap_name=chap_name_lst[i])
+			print '\n\n'
 	elif argv.file is not None:
 		with open(argv.file,'r') as f:
 			chap_url_list = f.read().splitlines()
+
 		for chap_url in chap_url_list:
-			print '======================================================================='
-			print chap_url
-			print '======================================================================='
+			print sep + '\n' + chap_url + '\n' + sep
 			download_chapter(chap_url, argv.dest)
 			print '\n\n'
