@@ -1,7 +1,7 @@
 import os, sys, ipdb
 import urllib2, shutil, argparse
 import cfscrape
-from progressbar import ProgressBar, Percentage, Bar, RotatingMarker, ETA, FileTransferSpeed
+from progressbar import ProgressBar, Percentage, Bar, RotatingMarker, ETA
 
 
 IMG_EXT = '.jpg'
@@ -9,8 +9,9 @@ BLOCK_SZ = int(2**13)
 WIDGETS = ['Progress: ', 
 	Percentage(), 
 	' ', Bar(marker=RotatingMarker(),left='[',right=']'), 
-	' ', ETA(), 
-	' ', FileTransferSpeed()]
+	' ', ETA()]
+	#, 
+	#' ', FileTransferSpeed()]
 
 
 #====================================================================================
@@ -184,7 +185,7 @@ if __name__ == '__main__':
 		os.mkdir(argv.dest)
 
 	# download comic depending on the input method
-	sep = '======================================================================='
+	sep = '=========================================================================================='
 	if argv.chapurl is not None:
 		download_chapter(argv.chapurl, argv.dest)
 	elif argv.serurl is not None:
