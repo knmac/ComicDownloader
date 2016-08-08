@@ -67,6 +67,8 @@ def get_chapter_url_list(series_url):
 			# parse name
 			name = lines[pos+2].lstrip()
 			name = name.replace('</a>','')
+			for c in '\/:*?"<>|':
+				name = name.replace(c, '')
 			chap_name_lst.append(name)
 			pos += 2
 		pos += 1
