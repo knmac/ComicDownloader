@@ -186,19 +186,31 @@ if __name__ == '__main__':
 
 	# download comic depending on the input method
 	sep = '=========================================================================================='
-	if argv.chapurl is not None:
+	if argv.chapurl is not None:	# download by chapter
 		download_chapter(argv.chapurl, argv.dest)
-	elif argv.serurl is not None:
+	elif argv.serurl is not None:	# download by series
+		# request starting and stopping indices
+		start = raw_input('Starting chapter index (Enter for the first chapter): ')
+		stop = raw_input('Ending chapter index (Enter for the last chapter): ')
+
+		# convert start and stop to int
+		start = int(start) if start != '' else None
+		stop = int(stop) if stop != '' else None
+		
+		# parse names and slice content
 		comic_name = argv.serurl.split('/')[-1]
 		chap_url_lst, chap_name_lst = get_chapter_url_list(argv.serurl)
+		chap_url_lst = chap_url_lst[start:stop]
+		chap_name_lst = chap_name_lst[start:stop]
 		n = len(chap_url_lst)
 		print n,'chapters found'
 
+		# download selected chapters in the series
 		for i in range(n):
 			print sep + '\n' + chap_url_lst[i] + '\n' + sep
 			download_chapter(chap_url_lst[i], argv.dest, chap_name=chap_name_lst[i])
 			print '\n\n'
-	elif argv.file is not None:
+	elif argv.file is not None:		# download by chapter list
 		with open(argv.file,'r') as f:
 			chap_url_list = f.read().splitlines()
 
