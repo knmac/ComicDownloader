@@ -3,7 +3,7 @@ import urllib2, shutil, argparse
 import cfscrape
 from progressbar import ProgressBar, Percentage, Bar, RotatingMarker, ETA
 
-
+PLACEHOLDER = 'broken_page.jpg'
 IMG_EXT = '.jpg'
 BLOCK_SZ = int(2**13)
 WIDGETS = ['Progress: ', 
@@ -105,14 +105,21 @@ def download_data(url, filename, dst_dir):
 	if os.path.exists(fullpath):
 		return
 
-	f = open(fullpath, 'wb')
-	page = urllib2.urlopen(url)
+	# Try to open url
+	try:
+		page = urllib2.urlopen(url)
+	except Exception, e:
+		shutil.copy(PLACEHOLDER, fullpath)
+		return
+
+	# get info
 	meta = page.info()
 	filesize = int(meta.getheaders("Content-Length")[0])
 	#print 'Downloading %s Bytes: %s' %(filename, filesize)
 	
 	#pbar = ProgressBar(widgets=WIDGETS, maxval=filesize).start()
 	#filesize_dl = 0
+	f = open(fullpath, 'wb')
 	while True:
 		buff = page.read(BLOCK_SZ)
 		if not buff:
