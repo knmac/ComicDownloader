@@ -1,33 +1,25 @@
 # ComicDownloader
 
-## Overview
-Allow downloading with a given url of a chapter or a file containing chapter urls
-For the time being, support readcomiconline.to
+## About
+Download comic with a given URL of a chapter (or series) or a file containing chapter URL. For the time being, only support [readcomiconline.to](www.readcomiconline.to).
 
 
 ## Usage
-For more information about how to use downloader.py, type
+For more information about how to use `downloader.py`, run the command;
 ```bash
 python downloader.py -h
 ```
 
-(Result)
-```bash
-usage: downloader.py [-h] (-c CHAPURL | -s SERURL | -f FILE) [-d DEST]
-
-optional arguments:
-  -h, --help  show this help message and exit
-  -c CHAPURL  The url of a comic chapter
-  -s SERURL   The url of a whole comic series
-  -f FILE     File contains list of comic's chapter url
-  -d DEST     Destination to store comic
-```
+For more examples, please see `run_downloader_example.sh`
 
 ## Dependencies
+
+- Python3
 - cfscraper
 - progressbar
 
-To install depencies, type
+To install dependencies, run the command
 ```bash
 pip install -r requirements.txt
 ```
+
